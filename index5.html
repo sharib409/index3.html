@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Memory Reel 🎬</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:black;
+  color:white;
+  overflow:hidden;
+  text-align:center;
+}
+
+/* SCENES */
+.scene{
+  display:none;
+  height:100vh;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+  opacity:0;
+  transform:scale(0.98);
+  transition:0.7s ease;
+}
+
+.scene.active{
+  display:flex;
+  opacity:1;
+  transform:scale(1);
+}
+
+.title{
+  font-size:42px;
+  color:#ff4fa3;
+  text-shadow:0 0 20px #ff4fa3;
+}
+
+/* BUTTON */
+button{
+  padding:12px 22px;
+  border:none;
+  border-radius:25px;
+  background:#ff4fa3;
+  color:white;
+  cursor:pointer;
+  margin-top:15px;
+}
+
+/* INPUT */
+input{
+  padding:10px;
+  border-radius:10px;
+  border:none;
+  text-align:center;
+}
+
+/* HEART */
+.heart{
+  position:fixed;
+  top:-10px;
+  color:#ff4fa3;
+  animation: fall 6s linear forwards;
+}
+
+@keyframes fall{
+  to{transform:translateY(110vh);}
+}
+
+/* CONFETTI */
+.confetti{
+  position:fixed;
+  width:8px;
+  height:8px;
+  top:-10px;
+  animation: drop 4s linear forwards;
+}
+
+@keyframes drop{
+  to{transform:translateY(110vh) rotate(360deg);}
+}
+
+/* TYPING */
+#typing{
+  min-height:40px;
+  margin-top:15px;
+  font-size:18px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🎵 MUSIC -->
+<audio id="bgm" loop>
+  <source src="music.mp3">
+</audio>
+
+<!-- 🎬 SCENE 0 -->
+<div class="scene active" id="s0">
+  <div class="title">🎬 Memory Reel</div>
+  <p>A cinematic birthday story ❤️</p>
+  <button onclick="next(1)">Start ▶</button>
+</div>
+
+<!-- 🔐 SCENE 1 -->
+<div class="scene" id="s1">
+  <h1>🔐 Unlock Memory</h1>
+  <p>Hint: love</p>
+  <input type="password" id="pass">
+  <button onclick="check()">Enter</button>
+</div>
+
+<!-- 💖 SCENE 2 -->
+<div class="scene" id="s2">
+  <h1>💖 Welcome</h1>
+  <div id="typing"></div>
+  <button onclick="next(3)">Continue ▶</button>
+</div>
+
+<!-- 💌 SCENE 3 -->
+<div class="scene" id="s3">
+  <h2>🎬 Chapter 1</h2>
+  <p>Aaj ka din sirf birthday nahi… ek memory hai 🎂</p>
+  <p>Tum quietly special ho ❤️</p>
+  <button onclick="next(4)">Next ▶</button>
+</div>
+
+<!-- 🎂 FINAL -->
+<div class="scene" id="s4">
+  <h1>🎂 HAPPY BIRTHDAY 🎂</h1>
+  <p>You are special… always ❤️</p>
+</div>
+
+<script>
+
+let heartInterval=null;
+let musicStarted=false;
+
+/* SWITCH SCENE */
+function next(n){
+
+  document.querySelectorAll(".scene").forEach(s=>{
+    s.classList.remove("active");
+  });
+
+  document.getElementById("s"+n).classList.add("active");
+
+  if(n===2){
+    startTyping();
+    startEffects();
+  }
+
+  if(n===4){
+    confetti();
+  }
+}
+
+/* PASSWORD */
+function check(){
+  let p=document.getElementById("pass").value;
+
+  if(p==="love"){
+    next(2);
+  }else{
+    alert("Wrong ❌ Hint: love");
+  }
+}
+
+/* TYPING EFFECT */
+function startTyping(){
+  let text="Loading memory...\nYou are the main character ❤️";
+  let el=document.getElementById("typing");
+  el.innerHTML="";
+  let i=0;
+
+  let t=setInterval(()=>{
+    el.innerHTML += text[i]==="\n"?"<br>":text[i];
+    i++;
+    if(i>=text.length) clearInterval(t);
+  },60);
+}
+
+/* HEARTS + MUSIC */
+function startEffects(){
+
+  if(!musicStarted){
+    document.getElementById("bgm").play().catch(()=>{});
+    musicStarted=true;
+  }
+
+  if(heartInterval) clearInterval(heartInterval);
+
+  heartInterval=setInterval(()=>{
+    let h=document.createElement("div");
+    h.className="heart";
+    h.innerHTML="❤️";
+    h.style.left=Math.random()*100+"vw";
+    document.body.appendChild(h);
+
+    setTimeout(()=>h.remove(),6000);
+  },300);
+}
+
+/* CONFETTI */
+function confetti(){
+  for(let i=0;i<90;i++){
+    let c=document.createElement("div");
+    c.className="confetti";
+    c.style.left=Math.random()*100+"vw";
+    c.style.background=["#ff4fa3","#fff","#ffea00","#00ffcc"][Math.floor(Math.random()*4)];
+    document.body.appendChild(c);
+
+    setTimeout(()=>c.remove(),4000);
+  }
+}
+
+</script>
+
+</body>
+</html>
